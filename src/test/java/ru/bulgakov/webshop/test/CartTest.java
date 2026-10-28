@@ -2,6 +2,8 @@ package ru.bulgakov.webshop.test;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.bulgakov.webshop.pages.WsProductPage;
+import ru.bulgakov.webshop.pages.WsWelcomePage;
 import ru.bulgakov.webshop.steps.AuthSteps;
 
 import static com.codeborne.selenide.Condition.text;
@@ -22,24 +24,26 @@ public class CartTest {
 
     @Test
     void addItemToCartTest() {
-        open(WEB_SHOP_URL);
-        $$("ul.top-menu li a").get(1).hover();
-        $(byText("Desktops")).click();
-        $$("div.product-grid div").get(0).click();
-        String itemName = $("[itemprop=\"name\"]").getText();
-        String itemPrice = $("[itemprop=\"price\"]").getText();
-        String itemQty = "2";
-        $$("dl dd ul li").get(0).$$("li input").get(0).click();
-        $("input.qty-input").setValue(itemQty);
-        $("input.add-to-cart-button").click();
-        $("div.bar-notification.success").shouldBe(visible);
-        $("span.cart-qty").shouldHave(text("(" + itemQty + ")"));
-        $("a.ico-cart").click();
-        $("a.product-name").shouldHave(text(itemName));
-        String itemQtyInCart = $("input.qty-input").getAttribute("value");
-        assertEquals(itemQty,itemQtyInCart);
-        $("span.product-subtotal").shouldHave(text(
-                String.valueOf(Float.parseFloat(itemPrice) * Float.parseFloat(itemQty))));
+        int processorIndex = 1;
+        String itemQty = "3";
+
+        WsProductPage productPage = open(WEB_SHOP_URL, WsWelcomePage.class)
+                .hoverComputersCategory()
+                .openDesktopsCategory()
+                .openProductPage();
+
+        String itemName = productPage.getItemNameFromProductPage();
+        String itemPrice = productPage.getItemPriceFromProductPage();
+
+        productPage.selectProcessor(processorIndex)
+                .enterProductQty(itemQty)
+                .addProductToCard()
+                .checkBarNotificationSuccess()
+                .checkQtyInHeaderCart(itemQty)
+                .openHeaderCart()
+                .checkProductNameInCart(itemName)
+                .checkProductQtyInCart(itemQty)
+                .checkTotalPriceInCart(itemPrice, itemQty, processorIndex);
 
 
         System.out.println(1);
