@@ -1,16 +1,29 @@
 package ru.bulgakov.webshop.test;
 
+import io.qameta.allure.*;
 import net.datafaker.Faker;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import ru.bulgakov.webshop.TestBase;
 import ru.bulgakov.webshop.pages.WsWelcomePage;
 
 import static com.codeborne.selenide.Selenide.open;
 
-public class RegistrationTest {
+public class RegistrationTest extends TestBase {
 
     private static final Faker faker = new Faker();
 
     @Test
+    @Owner("y.tsybulin")
+    @Tag("DemoWebShop")
+    @Severity(SeverityLevel.CRITICAL)
+    @Epic("Авторизация")
+    @Feature("Регистрация")
+    @Story("Регистрация нового пользователя")
+    @Link("TASK-6")
+    @DisplayName("Успешная регистрация нового пользователя")
+    @Description("Регистрируем пользователя через интерфейс")
     void registrationTest() {
         String password = (faker.harryPotter().character()+faker.number().positive());
         String email = faker.internet().emailAddress();
