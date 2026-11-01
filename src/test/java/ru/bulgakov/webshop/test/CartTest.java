@@ -1,17 +1,19 @@
 package ru.bulgakov.webshop.test;
 
+import io.qameta.allure.*;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import ru.bulgakov.webshop.TestBase;
+import ru.bulgakov.webshop.pages.WsProductPage;
+import ru.bulgakov.webshop.pages.WsWelcomePage;
 import ru.bulgakov.webshop.steps.AuthSteps;
 
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static ru.bulgakov.webshop.config.Config.WEB_SHOP_URL;
 
-public class CartTest {
+public class CartTest extends TestBase {
 
     private final AuthSteps authSteps = new AuthSteps();
 
@@ -21,25 +23,34 @@ public class CartTest {
     }
 
     @Test
+    @Owner("y.tsybulin")
+    @Tag("DemoWebShop")
+    @Severity(SeverityLevel.CRITICAL)
+    @Link("TASK-3")
+    @DisplayName("Проверка добавления товара в корзину")
+    @Description("Добавляем товар в корзину и проверяем соответствие его параметров и цены")
+
     void addItemToCartTest() {
-        open(WEB_SHOP_URL);
-        $$("ul.top-menu li a").get(1).hover();
-        $(byText("Desktops")).click();
-        $$("div.product-grid div").get(0).click();
-        String itemName = $("[itemprop=\"name\"]").getText();
-        String itemPrice = $("[itemprop=\"price\"]").getText();
-        String itemQty = "2";
-        $$("dl dd ul li").get(0).$$("li input").get(0).click();
-        $("input.qty-input").setValue(itemQty);
-        $("input.add-to-cart-button").click();
-        $("div.bar-notification.success").shouldBe(visible);
-        $("span.cart-qty").shouldHave(text("(" + itemQty + ")"));
-        $("a.ico-cart").click();
-        $("a.product-name").shouldHave(text(itemName));
-        String itemQtyInCart = $("input.qty-input").getAttribute("value");
-        assertEquals(itemQty,itemQtyInCart);
-        $("span.product-subtotal").shouldHave(text(
-                String.valueOf(Float.parseFloat(itemPrice) * Float.parseFloat(itemQty))));
+        int processorIndex = 1;
+        String itemQty = "3";
+
+        WsProductPage productPage = open(WEB_SHOP_URL, WsWelcomePage.class)
+                .hoverComputersCategory()
+                .openDesktopsCategory()
+                .openProductPage();
+
+        String itemName = productPage.getItemNameFromProductPage();
+        String itemPrice = productPage.getItemPriceFromProductPage();
+
+        productPage.selectProcessor(processorIndex)
+                .enterProductQty(itemQty)
+                .addProductToCard()
+                .checkBarNotificationSuccess()
+                .checkQtyInHeaderCart(itemQty)
+                .openHeaderCart()
+                .checkProductNameInCart(itemName)
+                .checkProductQtyInCart(itemQty)
+                .checkTotalPriceInCart(itemPrice, itemQty, processorIndex);
 
 
         System.out.println(1);
