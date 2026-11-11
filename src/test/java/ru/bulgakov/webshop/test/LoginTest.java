@@ -1,33 +1,29 @@
 package ru.bulgakov.webshop.test;
 
-import net.datafaker.Faker;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import ru.bulgakov.webshop.pages.WsRegistrationPage;
+import io.qameta.allure.*;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
+import ru.bulgakov.webshop.TestBase;
+import ru.bulgakov.webshop.pages.WsLoginPage;
 import ru.bulgakov.webshop.pages.WsWelcomePage;
+import ru.bulgakov.webshop.steps.AuthSteps;
 
 import static com.codeborne.selenide.Selenide.*;
-import static ru.bulgakov.webshop.config.Config.WEB_SHOP_REGISTRATION_URL;
-import static ru.bulgakov.webshop.config.Config.WEB_SHOP_URL;
+import static ru.bulgakov.webshop.config.Config.*;
 
-public class LoginTest {
+public class LoginTest extends TestBase {
 
-        private static final Faker faker = new Faker();
-        String email;
-        String password;
+    private static final String INVALID_EMAIL_TEST_PASSWORD = "TestPassword123!";
+
+    @Nested
+    public class PositiveTests {
+
+        private final AuthSteps authSteps = new AuthSteps();
 
         @BeforeEach
         void beforeEach() {
-            password = (faker.harryPotter().character()+faker.number().positive());
-            email = faker.internet().emailAddress();
-
-            open(WEB_SHOP_REGISTRATION_URL, WsRegistrationPage.class)
-                    .register(
-                            faker.name().firstName(),
-                            faker.name().lastName(),
-                            email,
-                            password)
-            .checkUserLoggedIn(email);
+            authSteps.registerNewUser();
 
             cookies().clear();
             localStorage().clear();
@@ -35,22 +31,39 @@ public class LoginTest {
         }
 
         @Test
+        @Owner("y.tsybulin")
+        @Tag("DemoWebShop")
+        @Severity(SeverityLevel.CRITICAL)
+        @Link("TASK-4")
+        @DisplayName("Проверка успешной авторизации")
+        @Description("Проверяем вход пользователя через интерфейс")
         void successLoginTest() {
 
-            open(WEB_SHOP_URL, WsWelcomePage.class)
-                    .openLoginPage()
+            open(WEB_SHOP_LOGIN_URL, WsLoginPage.class)
                     .verifyLoginPageOpened()
-                    .enterEmail(email)
-                    .enterPassword(password)
+                    .enterEmail(authSteps.getEmail())
+                    .enterPassword(authSteps.getPassword())
                     .rememberLoginAndPassword()
                     .submitLogin()
-                    .checkUserLoggedIn(email);
-
-            System.out.println(1);
-
-
-
-
-
+                    .checkUserLoggedIn(authSteps.getEmail());
         }
+    }
+
+    @ParameterizedTest
+    @Owner("y.tsybulin")
+    @Tag("DemoWebShop")
+    @Severity(SeverityLevel.CRITICAL)
+    @Link("TASK-5")
+    @DisplayName("Авторизация с невалидным Email")
+    @Description("Ввод невалидных значений для поля Email")
+    @CsvFileSource(resources = "/email.csv")
+    void invalidEmailLoginTest(String email) {
+
+        open(WEB_SHOP_URL, WsWelcomePage.class)
+                .openLoginPage()
+                .enterEmail(email)
+                .enterPassword(INVALID_EMAIL_TEST_PASSWORD)
+                .verifyEmailValidationErrorAppear()
+                .submitLogin();
+    }
 }
