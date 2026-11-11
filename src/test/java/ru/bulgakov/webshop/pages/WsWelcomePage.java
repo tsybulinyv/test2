@@ -13,7 +13,7 @@ public class WsWelcomePage {
     private final SelenideElement registerButton = $("a.ico-register");
     private final SelenideElement loginButton = $("a.ico-login");
     private final ElementsCollection headerMenu = $$("ul.top-menu li a");
-    private final SelenideElement CategoryDesktopsButton = $(byText("Desktops"));
+    private final SelenideElement categoryDesktopsButton = $(byText("Desktops"));
 
     @Step("Нажать на кнопку регистрации")
     public WsRegistrationPage openRegistration() {
@@ -35,7 +35,7 @@ public class WsWelcomePage {
 
     @Step("Открыть категорию \"Desktops\"")
     public WsCategoryProductsPage openDesktopsCategory() {
-        CategoryDesktopsButton.click();
+        categoryDesktopsButton.click();
         return new WsCategoryProductsPage();
     }
 }

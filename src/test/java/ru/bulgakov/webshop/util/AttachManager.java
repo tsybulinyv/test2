@@ -11,11 +11,12 @@ import java.util.List;
 
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.openqa.selenium.logging.LogType.BROWSER;
+import static ru.bulgakov.webshop.config.Config.getWebDriverConfig;
 
 public class AttachManager {
 
     @Attachment(value = "Last screenshot", type = "image/png")
-    public static byte[] takeScreenshot(String attachName) {
+    public static byte[] takeScreenshot() {
         return ((TakesScreenshot) getWebDriver()).getScreenshotAs(OutputType.BYTES);
     }
 
@@ -32,12 +33,27 @@ public class AttachManager {
 
         try {
             List<String> logs = Selenide.getWebDriverLogs(BROWSER);
+
             if (logs.isEmpty()) {
                 return "No browser console logs available";
             }
+
             return String.join("\n", logs);
         } catch (Exception e) {
             return "Unable to get browser console logs: " + e.getMessage();
         }
+    }
+
+    @Attachment(value = "Video", type = "text/html", fileExtension = ".html")
+    public static String addVideo(String sessionId) {
+        String selenoidUrl = getWebDriverConfig().selenoidUrl()
+                .replace("/wd/hub", "");
+
+        String videoUrl = "https://" + selenoidUrl
+                + "/video/" + sessionId + ".mp4";
+
+        return "<html><body><video width='100%' height='100%' controls>"
+                + "<source src='" + videoUrl + "' type='video/mp4'>"
+                + "</video></body></html>";
     }
 }

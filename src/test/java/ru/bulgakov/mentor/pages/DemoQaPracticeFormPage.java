@@ -88,9 +88,9 @@ public class DemoQaPracticeFormPage {
         return this;
     }
 
-    @Step("Загрузить аватар")
-    public DemoQaPracticeFormPage pictureUpload(String filePath) {
-        pictureUploadField.uploadFile(new File(filePath));
+    @Step("Загрузить аватар из ресурсов: {fileName}")
+    public DemoQaPracticeFormPage pictureUpload(String fileName) {
+        pictureUploadField.uploadFromClasspath(fileName);
         return this;
     }
 

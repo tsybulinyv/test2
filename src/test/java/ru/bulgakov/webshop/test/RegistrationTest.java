@@ -9,6 +9,7 @@ import ru.bulgakov.webshop.TestBase;
 import ru.bulgakov.webshop.pages.WsWelcomePage;
 
 import static com.codeborne.selenide.Selenide.open;
+import static ru.bulgakov.webshop.config.Config.WEB_SHOP_URL;
 
 public class RegistrationTest extends TestBase {
 
@@ -25,10 +26,11 @@ public class RegistrationTest extends TestBase {
     @DisplayName("Успешная регистрация нового пользователя")
     @Description("Регистрируем пользователя через интерфейс")
     void registrationTest() {
-        String password = (faker.harryPotter().character()+faker.number().positive());
+
+        String password = faker.harryPotter().character() + faker.number().positive();
         String email = faker.internet().emailAddress();
 
-        open("https://demowebshop.tricentis.com/", WsWelcomePage.class)
+        open(WEB_SHOP_URL, WsWelcomePage.class)
                 .openRegistration()
                 .verifyRegistrationOpened()
                 .selectMaleGender()
@@ -40,7 +42,5 @@ public class RegistrationTest extends TestBase {
                 .submitRegistration()
                 .checkRegistrationCompleted()
                 .checkUserLoggedIn(email);
-
-        System.out.println(1);
     }
 }

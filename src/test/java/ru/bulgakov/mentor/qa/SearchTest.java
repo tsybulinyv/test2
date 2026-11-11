@@ -34,7 +34,10 @@ public class SearchTest extends TestBase {
         promoCostPage.clickWantToRollButton();
         meetOrPayWindowPage.runToPayButtonClick();
         switchTo().window(1);
-        lavaPaymentPage.checkPaymentPrice();
+        lavaPaymentPage
+                .openCurrencySelector()
+                .chooseCurrencyRub()
+                .checkPaymentPrice();
     }
 
     @Test
@@ -56,7 +59,7 @@ public class SearchTest extends TestBase {
                 .dateOfBirthInput(7, "November", "1997")
                 .subjectsInput("Maths")
                 .hobbiesSportsSelect()
-                .pictureUpload("Y:/1.png")
+                .pictureUpload("img/images.jpg")
                 .currentAddressInput("Ulitsa Pushkina, Dom Kolotushkina")
                 .stateSelect("NCR")
                 .citySelect("Delhi")
