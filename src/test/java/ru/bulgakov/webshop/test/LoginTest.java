@@ -32,7 +32,7 @@ public class LoginTest extends TestBase {
 
         @Test
         @Owner("y.tsybulin")
-        @Tag("DemoWebShop")
+        @Tags({@Tag("UI"), @Tag("positive"), @Tag("DemoWebShop")})
         @Severity(SeverityLevel.CRITICAL)
         @Link("TASK-4")
         @DisplayName("Проверка успешной авторизации")
@@ -51,7 +51,7 @@ public class LoginTest extends TestBase {
 
     @ParameterizedTest
     @Owner("y.tsybulin")
-    @Tag("DemoWebShop")
+    @Tags({@Tag("UI"), @Tag("negative"), @Tag("DemoWebShop")})
     @Severity(SeverityLevel.CRITICAL)
     @Link("TASK-5")
     @DisplayName("Авторизация с невалидным Email")

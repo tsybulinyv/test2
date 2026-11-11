@@ -1,10 +1,7 @@
 package ru.bulgakov.webshop.test;
 
 import io.qameta.allure.*;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import ru.bulgakov.webshop.TestBase;
 import ru.bulgakov.webshop.pages.WsCartPage;
 import ru.bulgakov.webshop.pages.WsProductPage;
@@ -29,7 +26,7 @@ public class CartTest extends TestBase {
 
     @Test
     @Owner("y.tsybulin")
-    @Tag("DemoWebShop")
+    @Tags({@Tag("UI"), @Tag("positive"), @Tag("DemoWebShop")})
     @Severity(SeverityLevel.CRITICAL)
     @Link("TASK-3")
     @DisplayName("Проверка добавления товара в корзину")
