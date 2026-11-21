@@ -1,14 +1,24 @@
 package ru.bulgakov.mentor.qa;
 
 import com.codeborne.selenide.Configuration;
+import io.qameta.allure.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import ru.bulgakov.mentor.pages.*;
+import ru.bulgakov.webshop.TestBase;
 
 import static com.codeborne.selenide.Selenide.*;
 
-public class SearchTest {
+public class SearchTest extends TestBase {
 
     @Test
+    @Owner("y.tsybulin")
+    @Tag("mentor")
+    @Severity(SeverityLevel.NORMAL)
+    @Link("TASK-1")
+    @DisplayName("Проверка цены услуги ментора")
+    @Description("Стоимость услуги на сайте должна быть 47000 руб.")
     void mentoringPriceShouldBe47000Test() {
 //        Configuration.holdBrowserOpen = true;
         Configuration.pageLoadStrategy = "eager";
@@ -24,23 +34,32 @@ public class SearchTest {
         promoCostPage.clickWantToRollButton();
         meetOrPayWindowPage.runToPayButtonClick();
         switchTo().window(1);
-        lavaPaymentPage.checkPaymentPrice();
+        lavaPaymentPage
+                .openCurrencySelector()
+                .chooseCurrencyRub()
+                .checkPaymentPrice();
     }
 
     @Test
+    @Owner("y.tsybulin")
+    @Tag("DemoQA")
+    @Severity(SeverityLevel.CRITICAL)
+    @Link("TASK-2")
+    @DisplayName("Проверка формы регистрации DemoQA")
+    @Description("Заполняем форму регистрации")
     void demoQaPracticeFormTest() {
 //                Configuration.holdBrowserOpen = true;
         DemoQaPracticeFormPage demoQaPracticeFormPage = new DemoQaPracticeFormPage();
                 demoQaPracticeFormPage.openPage()
                 .nameInput("Yaroslav")
-                .lastnameInput("Tsybulin")
+                .lastNameInput("Tsybulin")
                 .userEmailInput("example@gmail.com")
                 .genderMaleSelect()
                 .userNumberInput("8005553535")
                 .dateOfBirthInput(7, "November", "1997")
                 .subjectsInput("Maths")
                 .hobbiesSportsSelect()
-                .pictureUpload("Y:/1.png")
+                .pictureUpload("img/images.jpg")
                 .currentAddressInput("Ulitsa Pushkina, Dom Kolotushkina")
                 .stateSelect("NCR")
                 .citySelect("Delhi")

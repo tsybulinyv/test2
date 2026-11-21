@@ -1,6 +1,27 @@
 
+
 plugins {
     id 'java'
+    id 'io.qameta.allure' version "4.3.0"
+}
+
+// Версии Allure
+def allureAdapterVersion = "2.35.5"
+def allureCliVersion = "2.42.1"
+
+allure {
+    // Версия Allure Commandline
+    version.set(allureCliVersion)
+
+    report {
+        singleFile = true
+    }
+
+    adapter {
+        // Версия Java Adapter
+        allureJavaVersion.set(allureAdapterVersion)
+        aspectjWeaver.set(true)
+    }
 }
 
 repositories {
@@ -8,12 +29,98 @@ repositories {
 }
 
 dependencies {
+    testImplementation platform("io.qameta.allure:allure-bom:$allureAdapterVersion")
+    testImplementation "io.qameta.allure:allure-selenide"
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation 'com.codeborne:selenide:7.19.0'
     testImplementation 'net.datafaker:datafaker:2.7.0'
+    testImplementation 'org.aeonbits.owner:owner:1.0.12'
 }
 
 test {
     useJUnitPlatform()
+    systemProperties(System.getProperties())
+    outputs.upToDateWhen { false }
+}
+
+tasks.register('Mentor', Test) {
+    dependsOn testClasses
+
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+
+    outputs.upToDateWhen { false }
+
+    useJUnitPlatform {
+        includeTags 'mentor'
+    }
+    systemProperties(System.getProperties())
+}
+
+tasks.register('DemoQA', Test) {
+    dependsOn testClasses
+
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+
+    outputs.upToDateWhen { false }
+
+    useJUnitPlatform {
+        includeTags 'DemoQA'
+    }
+    systemProperties(System.getProperties())
+}
+
+tasks.register('DemoWebShop', Test) {
+    dependsOn testClasses
+
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+
+    outputs.upToDateWhen { false }
+
+    useJUnitPlatform {
+        includeTags 'DemoWebShop'
+    }
+    systemProperties(System.getProperties())
+
+}
+
+tasks.register('uiTest', Test) {
+    dependsOn testClasses
+
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+
+    outputs.upToDateWhen { false }
+
+    useJUnitPlatform {
+        def tag = System.getProperty("tag")
+        if (tag != null && !tag.isBlank()) {
+            includeTags("UI & ${tag}")
+        } else {
+            includeTags("UI")
+        }
+    }
+    systemProperties(System.getProperties())
+}
+
+tasks.register('apiTest', Test) {
+    dependsOn testClasses
+
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+
+    outputs.upToDateWhen { false }
+
+    useJUnitPlatform {
+        def tag = System.getProperty("tag")
+        if (tag != null && !tag.isBlank()) {
+            includeTags("API & ${tag}")
+        } else {
+            includeTags("API")
+        }
+    }
+    systemProperties(System.getProperties())
 }
